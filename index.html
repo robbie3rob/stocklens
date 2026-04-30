@@ -356,58 +356,11 @@ async function analyzeStock() {
 
   loadCongressTrades(ticker);
 
-  const sys = `You are EdgeFlow, a next-gen stock intelligence AI for young investors. Analyze the given stock ticker and return ONLY a single valid JSON object. No markdown, no backticks, no explanation. Start with { and end with }.
-
-JSON structure:
-{
-  "companyName": "Full company name",
-  "edgeScore": 74,
-  "verdict": "Buy",
-  "sentiment": "Bullish",
-  "signals": {
-    "congressActivity":  { "score": 65, "label": "Moderate Buying" },
-    "analystRatings":    { "score": 78, "label": "Strong Buy" },
-    "darkPool":          { "score": 72, "label": "Accumulating" },
-    "ceoBuying":         { "score": 55, "label": "Neutral" },
-    "putCallRatio":      { "score": 60, "label": "Slightly Bullish" },
-    "aiSentiment":       { "score": 70, "label": "Bullish" },
-    "momentum":          { "score": 68, "label": "Strong" },
-    "socialBuzz":        { "score": 75, "label": "Very High" },
-    "optionsFlow":       { "score": 65, "label": "Bullish" },
-    "insiderMoves":      { "score": 50, "label": "Neutral" },
-    "shortInterest":     { "score": 40, "label": "High Short" },
-    "earningsSurprise":  { "score": 80, "label": "Beat" },
-    "unusualVolume":     { "score": 60, "label": "Elevated" },
-    "institutionalFlow": { "score": 70, "label": "Accumulating" },
-    "macroSignal":       { "score": 55, "label": "Mild Tailwind" },
-    "fundamentals":      { "score": 72, "label": "Strong" },
-    "relativeStrength":  { "score": 68, "label": "Outperforming" }
-  },
-  "summary": "3 sentences: company overview, recent performance, why young investors should pay attention now.",
-  "opportunity": "2-3 sentences on the single biggest upside catalyst right now.",
-  "risks": "2-3 sentences on the top 2 risks to watch closely.",
-  "recommendation": "2-3 sentences with a clear actionable recommendation for a first-time young investor."
-}
-
-CRITICAL: Use the full 0-100 range to create meaningful variance between different stocks. Not every score should be 60-70. A bearish signal should be 25-40. A very bullish signal should be 80-95. Make each stock genuinely different.`;
-
   try {
-    const ANTHROPIC_KEY = localStorage.getItem('ef_api_key') || 'PASTE_YOUR_KEY_HERE';
-
-    const res = await fetch('https://corsproxy.io/?url=' + encodeURIComponent('https://api.anthropic.com/v1/messages'), {
+    const res = await fetch('/api/analyze', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5',
-        max_tokens: 1500,
-        system: sys,
-        messages: [{ role: 'user', content: `Analyze stock: ${ticker}` }]
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ticker })
     });
 
     if (!res.ok) {
@@ -476,7 +429,7 @@ async function loadCongressTrades(ticker) {
   const el = document.getElementById('c-trades');
   el.innerHTML = '<span class="loading pulse">Fetching STOCK Act disclosures...</span>';
   try {
-    const url = `https://corsproxy.io/?url=${encodeURIComponent('https://www.capitoltrades.com/trades?ticker='+ticker+'&pageSize=30')}`;
+    const url = `/api/congress?ticker=${ticker}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error();
     const text = await res.text();
