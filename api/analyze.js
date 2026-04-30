@@ -47,7 +47,8 @@ Use the full 0-100 range. Make scores meaningfully different between stocks.`;
     });
     if (!response.ok) { const err = await response.json(); return res.status(response.status).json({ error: err.error?.message || 'API error' }); }
     const data = await response.json();
-    const raw = data.content.map(i => i.text || '').join('').replace(/```json|```/g, '').trim();
+    if (!data.content) return res.status(500).json({ error: JSON.stringify(data) });
+const raw = data.content.map(i => i.text || '').join('').replace(/```json|```/g, '').trim();
     let result;
     try { result = JSON.parse(raw); } catch(e) { const m = raw.match(/\{[\s\S]*\}/); if (m) result = JSON.parse(m[0]); else return res.status(500).json({ error: 'Parse error' }); }
     return res.status(200).json(result);
