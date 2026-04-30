@@ -75,7 +75,7 @@ Return this exact structure:
     }
 
     const data = await response.json();
-    const raw = data.content.map(i => i.text || '').join('').replace(/```json|```/g, '').trim();
+   const raw = data.content.map(i => i.text || '').join('').replace(/```json|```/g, '').trim();
 
     let result;
     try {
