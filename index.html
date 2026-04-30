@@ -212,7 +212,7 @@
     <div id="s-empty" class="empty"><div class="empty-icon">📊</div>Run an Edge Score first to see the full signal breakdown.</div>
     <div id="s-content" style="display:none;">
       <div class="card"><div class="card-title">All 14 Signals</div><div class="signal-grid" id="signal-grid"></div></div>
-      <div class="card"><div class="card-title">Signal Impact Weights</div><table class="impact-table" id="impact-table"></table></div>
+
     </div>
   </div>
 
@@ -288,19 +288,18 @@
 
 <script>
 const SIGNAL_DEFS = [
-  { key:'aiSentiment',      icon:'🤖', label:'AI Sentiment',        weight:15 },
-  { key:'momentum',         icon:'📈', label:'Price Momentum',       weight:12 },
-  { key:'socialBuzz',       icon:'📱', label:'Social Buzz',          weight:10 },
-  { key:'congressActivity', icon:'🏛️', label:'Congress Activity',    weight:10 },
-  { key:'optionsFlow',      icon:'⚡', label:'Options Flow',         weight:10 },
-  { key:'insiderMoves',     icon:'🔍', label:'Insider Moves',        weight:8  },
-  { key:'shortInterest',    icon:'🩳', label:'Short Interest',       weight:8  },
-  { key:'analystRatings',   icon:'🏦', label:'Analyst Ratings',      weight:7  },
-  { key:'earningsSurprise', icon:'📣', label:'Earnings Surprise',    weight:7  },
-  { key:'unusualVolume',    icon:'🔊', label:'Volume Anomaly',        weight:5  },
-  { key:'institutionalFlow',icon:'🏢', label:'Institutional Flow',   weight:4  },
-  { key:'fearGreed',        icon:'😱', label:'Fear & Greed',         weight:1  },
-  { key:'macroSignal',      icon:'🌍', label:'Macro Signal',         weight:2  },
+  { key:'congressActivity', icon:'🏛️', label:'Congress Activity',    weight:18 },
+  { key:'analystRatings',   icon:'🏦', label:'Analyst Ratings',      weight:18 },
+  { key:'aiSentiment',      icon:'🤖', label:'AI Sentiment',        weight:12 },
+  { key:'momentum',         icon:'📈', label:'Price Momentum',       weight:10 },
+  { key:'socialBuzz',       icon:'📱', label:'Social Buzz',          weight:8  },
+  { key:'optionsFlow',      icon:'⚡', label:'Options Flow',         weight:8  },
+  { key:'insiderMoves',     icon:'🔍', label:'Insider Moves',        weight:7  },
+  { key:'shortInterest',    icon:'🩳', label:'Short Interest',       weight:7  },
+  { key:'earningsSurprise', icon:'📣', label:'Earnings Surprise',    weight:5  },
+  { key:'unusualVolume',    icon:'🔊', label:'Volume Anomaly',        weight:3  },
+  { key:'institutionalFlow',icon:'🏢', label:'Institutional Flow',   weight:2  },
+  { key:'macroSignal',      icon:'🌍', label:'Macro Signal',         weight:1  },
   { key:'fundamentals',     icon:'📋', label:'Fundamentals',         weight:1  },
 ];
 
@@ -392,13 +391,7 @@ async function analyzeStock() {
       return `<div class="sig"><div class="sig-icon">${def.icon}</div><div class="sig-name">${def.label}</div><div class="sig-val" style="color:${col};">${sig.score}</div><div class="sig-label">${sig.label||''}</div><div class="sig-bar"><div class="sig-fill" style="width:${sig.score}%;background:${col};"></div></div></div>`;
     }).join('');
 
-    const sorted = [...SIGNAL_DEFS].sort((a,b) => b.weight-a.weight);
-    document.getElementById('impact-table').innerHTML =
-      `<tr><th>Signal</th><th>Score</th><th>Weight</th><th style="min-width:100px;">Impact</th></tr>` +
-      sorted.map(def => {
-        const sig = signals[def.key] || { score:50 };
-        return `<tr><td>${def.icon} ${def.label}</td><td style="color:${sigColor(sig.score)};font-family:'DM Mono',monospace;font-weight:500;">${sig.score}</td><td style="color:var(--text3);">${def.weight}%</td><td><div class="weight-bar-bg"><div class="weight-bar" style="width:${def.weight*5}%;"></div></div></td></tr>`;
-      }).join('');
+
 
   } catch(e) {
     document.getElementById('e-summary').textContent = 'Error: ' + e.message;
